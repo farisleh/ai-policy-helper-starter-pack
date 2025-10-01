@@ -3,7 +3,7 @@ import os
 
 class Settings(BaseModel):
     embedding_model: str = os.getenv("EMBEDDING_MODEL", "local-384")
-    llm_provider: str = os.getenv("LLM_PROVIDER", "stub")  # stub | openai | ollama
+    llm_provider: str = os.getenv("LLM_PROVIDER", "openai")  # stub | openai | ollama
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
     ollama_host: str = os.getenv("OLLAMA_HOST", "http://ollama:11434")
     vector_store: str = os.getenv("VECTOR_STORE", "qdrant")  # qdrant | memory

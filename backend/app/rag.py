@@ -4,6 +4,7 @@ import numpy as np
 from .settings import settings
 from .ingest import chunk_text, doc_hash
 from qdrant_client import QdrantClient, models as qm
+import uuid
 
 # ---- Simple local embedder (deterministic) ----
 def _tokenize(s: str) -> List[str]:
@@ -172,7 +173,7 @@ class RAGEngine:
             text = ch["text"]
             h = doc_hash(text)
             meta = {
-                "id": h,
+                "id": str(uuid.UUID(h[:32])),
                 "hash": h,
                 "title": ch["title"],
                 "section": ch.get("section"),
