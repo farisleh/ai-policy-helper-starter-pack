@@ -147,15 +147,72 @@ npm run dev
 - Default is **Qdrant** via Docker. Fallback is in-memory if Qdrant isn’t available.
 - To switch to in-memory explicitly: `VECTOR_STORE=memory` in `.env`.
 
-### API Reference
-- `POST /api/ingest` → `{ indexed_docs, indexed_chunks }`
-- `POST /api/ask` body:
-  ```json
-  { "query": "What's the refund window for Category A?", "k": 4 }
-  ```
-  Response includes `answer`, `citations[]`, `chunks[]`, `metrics`.
-- `GET /api/metrics` → counters + avg latencies
-- `GET /api/health` → `{ "status": "ok" }`
+
+### API Reference & Examples
+
+#### `POST /api/ingest`
+**Request:**
+```bash
+curl -X POST http://localhost:8000/api/ingest
+```
+**Response:**
+```json
+{
+  "indexed_docs": 6,
+  "indexed_chunks": 42
+}
+```
+
+#### `POST /api/ask`
+**Request:**
+```bash
+curl -X POST http://localhost:8000/api/ask -H 'Content-Type: application/json' \
+  -d '{"query": "What\'s the refund window for Category A?", "k": 4}'
+```
+**Response:**
+```json
+{
+  "query": "What's the refund window for Category A?",
+  "answer": "Answer text...",
+  "citations": [
+    { "title": "Returns_and_Refunds.md", "section": "Conditions" }
+  ],
+  "chunks": [
+    { "title": "Returns_and_Refunds.md", "section": "Conditions", "text": "...chunk text..." }
+  ],
+  "metrics": {
+    "retrieval_ms": 12.3,
+    "generation_ms": 210.5
+  }
+}
+```
+
+#### `GET /api/metrics`
+**Request:**
+```bash
+curl http://localhost:8000/api/metrics
+```
+**Response:**
+```json
+{
+  "total_docs": 6,
+  "total_chunks": 42,
+  "avg_retrieval_latency_ms": 12.3,
+  "avg_generation_latency_ms": 210.5,
+  "embedding_model": "local-384",
+  "llm_model": "stub"
+}
+```
+
+#### `GET /api/health`
+**Request:**
+```bash
+curl http://localhost:8000/api/health
+```
+**Response:**
+```json
+{ "status": "ok" }
+```
 
 ### UI Walkthrough
 1. Open **http://localhost:3000**.
